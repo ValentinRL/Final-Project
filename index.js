@@ -135,7 +135,7 @@ app.get('/login', (req, res) => {
 	return res.json({ token });
 });
 
-app.post('/createPost',
+app.post('/post',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     if ('title' in req.body == false) {
@@ -174,7 +174,8 @@ app.post('/createPost',
 		res.json({ status: 'Missing shipping' });
 		return;
 	}
-	postList.push(new Post(
+
+	let newPost = new Post(
 		req.body.title,
 		req.body.description,
 		req.body.category,
@@ -183,8 +184,95 @@ app.post('/createPost',
 		req.body.shipping,
 		req.body.pickup,
 		req.user
-	));
-	res.send("Success!");
+	)
+	postList.push(newPost);
+	res.status(201);
+	res.send(newPost);
+})
+
+app.put('/post/:id',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+	if ('id' in req.params == false) {
+		res.status(400);
+		res.json({ status: 'Missing id from params' });
+		return;
+	}
+
+	let index = postList.findIndex(p => p.id == req.params.id);
+
+	if(index == -1){
+		res.status(404);
+		res.json({ status: 'No such post' });
+		return;
+	}
+
+    if ('title' in req.body != false) {
+		postList[index].title = req.body.title;
+	}
+	if ('description' in req.body != false) {
+		postList[index].description = req.body.description;
+	}
+	if ('category' in req.body != false) {
+		postList[index].category = req.body.category;
+	}
+	if ('location' in req.body != false) {
+		postList[index].location = req.body.location;
+	}
+	if ('images' in req.body != false) {
+		//TODO
+		postList[index].images = req.body.images;
+	}
+	if ('pickup' in req.body != false) {
+		postList[index].hasPickup = req.body.pickup;
+	}
+	if ('shipping' in req.body != false) {
+		postList[index].hasShipping = req.body.shipping;
+	}
+
+	res.send("Updated!");
+})
+
+app.delete('/post/:id',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+	if ('id' in req.params == false) {
+		res.status(400);
+		res.json({ status: 'Missing id from params' });
+		return;
+	}
+	let index = postList.findIndex(p => p.id == req.params.id);
+	if(index == -1){
+		res.status(404);
+		res.json({ status: 'No such post' });
+		return;
+	}
+	postList.splice(index,1);
+	res.status(204);
+	res.send("Deleted!");
+})
+
+app.get('/post/:id',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+	if ('id' in req.params == false) {
+		res.status(400);
+		res.json({ status: 'Missing id from params' });
+		return;
+	}
+	let index = postList.findIndex(p => p.id == req.params.id);
+	if(index == -1){
+		res.status(404);
+		res.json({ status: 'No such post' });
+		return;
+	}
+
+	res.send(postList[index]);
+})
+
+app.get('/posts',
+  (req, res) => {
+	res.send(postList);
 })
 
 app.listen(port, () => {
