@@ -17,7 +17,7 @@ class Post {
 		let date = ('0' + date_ob.getDate()).slice(-2);
 		let month = ('0' + (date_ob.getMonth() + 1)).slice(-2);
 		let year = date_ob.getFullYear();
-		this.dop = year + "-" + month + "-" + date;
+		this.dop = year + "." + month + "." + date;
 
 		this.user = user;
 	}
