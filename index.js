@@ -159,9 +159,18 @@ app.post('/post',
 		return;
 	}
 	if ('images' in req.body == false) {
-		//TODO
 		res.status(400);
 		res.json({ status: 'Missing images' });
+		return;
+	}
+	if(req.body.images instanceof Array == false){
+		res.status(400);
+		res.json({ status: 'images must be array' });
+		return;
+	}
+	if(req.body.images.length > 4 || req.body.images.length < 1) {
+		res.status(400);
+		res.json({ status: 'Images should be from 1 to 4' });
 		return;
 	}
 	if ('pickup' in req.body == false) {
@@ -179,10 +188,11 @@ app.post('/post',
 		req.body.title,
 		req.body.description,
 		req.body.category,
-		req.body.image,
+		req.body.images,
 		req.body.price,
 		req.body.shipping,
 		req.body.pickup,
+		req.body.location,
 		req.user
 	)
 	postList.push(newPost);
@@ -220,7 +230,16 @@ app.put('/post/:id',
 		postList[index].location = req.body.location;
 	}
 	if ('images' in req.body != false) {
-		//TODO
+		if(req.body.images instanceof Array == false){
+			res.status(400);
+			res.json({ status: 'images must be array' });
+			return;
+		}
+		if(req.body.images.length > 4 || req.body.images.length < 1) {
+			res.status(400);
+			res.json({ status: 'Images should be from 1 to 4' });
+			return;
+		} 
 		postList[index].images = req.body.images;
 	}
 	if ('pickup' in req.body != false) {
@@ -272,7 +291,17 @@ app.get('/post/:id',
 
 app.get('/posts',
   (req, res) => {
-	res.send(postList);
+	let resultPostList = postList;
+	if ('category' in req.query != false) {
+		resultPostList = resultPostList.find(p => p.category == req.query.category);
+	}
+	if ('location' in req.query != false) {
+		resultPostList = resultPostList.find(p => p.location == req.query.location);
+	}
+	if ('dop' in req.query != false) {
+		resultPostList = resultPostList.find(p => p.dop == req.query.dop);
+	}
+	res.send(resultPostList);
 })
 
 app.listen(port, () => {
