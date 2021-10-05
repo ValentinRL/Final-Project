@@ -135,7 +135,7 @@ app.get('/login', (req, res) => {
 	return res.json({ token });
 });
 
-app.post('/post',
+app.post('/addPost',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     if ('title' in req.body == false) {
