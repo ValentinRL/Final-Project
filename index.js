@@ -91,6 +91,18 @@ app.post('/register', (req, res) => {
 		return;
 	}
 
+	if(userList.find(u => u.username == req.body.username) != null){
+		res.status(400);
+		res.json({ status: 'Username already exists' });
+		return;
+	}
+
+	if(userList.find(u => u.email == req.body.email) != null){
+		res.status(400);
+		res.json({ status: 'Email already exists' });
+		return;
+	}
+
 	const salt = bcrypt.genSaltSync(6);
 	const hashedPassword = bcrypt.hashSync(req.body.password, salt);
 	userList.push(
@@ -215,7 +227,7 @@ app.put('/post/:id',
 		return;
 	}
 
-	let index = postList.findIndex(p => p.id == req.params.id);
+	let index = postList.findIndex(p => p.id == req.params.id && p.user.id == req.user.id);
 
 	if(index == -1){
 		res.status(404);
@@ -266,7 +278,7 @@ app.delete('/post/:id',
 		res.json({ status: 'Missing id from params' });
 		return;
 	}
-	let index = postList.findIndex(p => p.id == req.params.id);
+	let index = postList.findIndex(p => p.id == req.params.id && p.user.id == req.user.id);
 	if(index == -1){
 		res.status(404);
 		res.json({ status: 'No such post' });
@@ -285,7 +297,7 @@ app.get('/post/:id',
 		res.json({ status: 'Missing id from params' });
 		return;
 	}
-	let index = postList.findIndex(p => p.id == req.params.id);
+	let index = postList.findIndex(p => p.id == req.params.id && p.user.id == req.user.id);
 	if(index == -1){
 		res.status(404);
 		res.json({ status: 'No such post' });

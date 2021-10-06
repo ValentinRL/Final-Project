@@ -10,7 +10,6 @@ class User {
 		this.password = password;
 		this.email = email;
 		this.dob = dob;
-		//this.cd = cd;
 	}
 
 	getUserInfo() {
