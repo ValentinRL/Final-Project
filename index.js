@@ -1,3 +1,9 @@
+/*
+Graded exercise in building cloud integration. 
+
+Valentin Raltchev
+Leon Bellmann
+*/
 const express = require('express');
 const app = express();
 const port = 3000;
@@ -304,14 +310,20 @@ app.get('/posts',
 	res.send(resultPostList);
 })
 
+
 let serverInstance = null;
 
+
+function start(){
+	serverInstance = app.listen(port, () => {
+		console.log(`Example app listening at http://localhost:${port}`)	
+	})
+}
+
+start();
+
 module.exports = {
-	start: function(){
-		serverInstance = app.listen(port, () => {
-			console.log(`Example app listening at http://localhost:${port}`)	
-		})
-	},
+	start,
 	close: function(){
 		serverInstance.close();
 	}
