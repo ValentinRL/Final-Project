@@ -304,6 +304,15 @@ app.get('/posts',
 	res.send(resultPostList);
 })
 
-app.listen(port, () => {
-	console.log(`Example app listening at http://localhost:${port}`);
-});
+let serverInstance = null;
+
+module.exports = {
+	start: function(){
+		serverInstance = app.listen(port, () => {
+			console.log(`Example app listening at http://localhost:${port}`)	
+		})
+	},
+	close: function(){
+		serverInstance.close();
+	}
+}
